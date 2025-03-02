@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Your QR Code{% endblock %}
+{% block content %}
+<div class="qr-code text-center">
+    <h1 class="mb-4"><i class="fas fa-qrcode me-2"></i>Your QR Code</h1>
+    <img src="{{ url_for('static', filename=qr_path.split('static/')[1]) }}"
+         alt="QR Code" class="img-fluid" style="max-width: 300px;" data-aos="zoom-in">
+    <p class="mt-3">User ID: {{ user_id }}</p>
+    <p class="lead">Scan this QR code in an emergency to access your health data.</p>
+    <div class="d-flex justify-content-center gap-3 mt-4">
+        <button class="btn btn-success" onclick="window.print()"><i class="fas fa-print me-2"></i>Print QR Code</button>
+        <a href="{{ url_for('static', filename=qr_path.split('static/')[1]) }}"
+           download="qr_code_{{ user_id }}.png"
+           class="btn btn-primary"><i class="fas fa-download me-2"></i>Download QR Code</a>
+    </div>
+    <div class="mt-4">
+        <h5><i class="fas fa-info-circle me-1"></i>Where to Keep Your QR Code</h5>
+        <ul class="list-unstyled text-start mx-auto" style="max-width: 400px;">
+            <li class="mb-2"><i class="fas fa-mobile-alt me-2"></i>Set this QR code as your phone's lock screen wallpaper for quick access.</li>
+            <li class="mb-2"><i class="fas fa-wallet me-2"></i>Print it and keep it in your wallet as an emergency card.</li>
+            <li><i class="fas fa-sticky-note me-2"></i>Print it as a sticker and attach it to your phone case.</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true
+    });
+</script>
+{% endblock %}

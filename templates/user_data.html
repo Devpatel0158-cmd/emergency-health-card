@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}User Health Data{% endblock %}
+{% block content %}
+<div class="card mx-auto" style="max-width: 500px;" data-aos="fade-up">
+    <div class="card-body text-center">
+        <h1 class="mb-4"><i class="fas fa-user-md me-2"></i>Health Data</h1>
+        {% if user.profile_picture %}
+        <img src="{{ url_for('uploaded_file', filename=user.profile_picture.split('/')[-1]) }}"
+             alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px; border: 3px solid #1e88e5;">
+        {% else %}
+        <i class="fas fa-user-circle fa-5x mb-3" style="color: #1e88e5;"></i>
+        {% endif %}
+        <p><strong><i class="fas fa-user me-1"></i>Name:</strong> {{ user.name }}</p>
+        <p><strong><i class="fas fa-calendar-alt me-1"></i>Age:</strong> {{ user.age }}</p>
+        <p><strong><i class="fas fa-calendar-alt me-1"></i>Date of Birth:</strong> {{ user.date_of_birth if user.date_of_birth else 'Not specified' }}</p>
+        <p><strong><i class="fas fa-ruler-vertical me-1"></i>Height:</strong> {{ user.height if user.height else 'Not specified' }} cm</p>
+        <p><strong><i class="fas fa-weight me-1"></i>Weight:</strong> {{ user.weight if user.weight else 'Not specified' }} kg</p>
+        <p><strong><i class="fas fa-tint me-1"></i>Blood Type:</strong> {{ user.blood_type }}</p>
+        <p><strong><i class="fas fa-allergies me-1"></i>Allergies:</strong> {{ user.allergies if user.allergies else 'None' }}</p>
+        <p><strong><i class="fas fa-pills me-1"></i>Medications:</strong> {{ user.medications if user.medications else 'None' }}</p>
+        <p><strong><i class="fas fa-phone-alt me-1"></i>Emergency Contact:</strong> {{ user.emergency_contact }}</p>
+        {% if user.emergency_contacts %}
+        <p><strong><i class="fas fa-phone-alt me-1"></i>Emergency Contacts:</strong></p>
+        <ul class="text-start">
+            {% for contact in user.emergency_contacts %}
+            <li>{{ contact.number }} ({{ contact.relation if contact.relation else 'Unknown Relation' }})</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <p><strong><i class="fas fa-heartbeat me-1"></i>Health Conditions:</strong> {{ user.health_conditions if user.health_conditions else 'None' }}</p>
+        <p><strong><i class="fas fa-sticky-note me-1"></i>Notes:</strong> {{ user.notes if user.notes else 'None' }}</p>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true
+    });
+</script>
+{% endblock %}

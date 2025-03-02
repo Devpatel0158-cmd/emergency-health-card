@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Edit Health Card{% endblock %}
+{% block content %}
+<div class="card mx-auto">
+    <div class="card-body">
+        <h1 class="mb-4"><i class="fas fa-edit me-2"></i>Edit Health Information</h1>
+        <form method="POST" id="healthForm" class="needs-validation" novalidate enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="profile_picture" class="form-label"><i class="fas fa-image me-1"></i>Profile Picture</label>
+                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                {% if user.profile_picture %}
+                <p class="mt-2"><small>Current Picture: <img src="{{ url_for('uploaded_file', filename=user.profile_picture.split('/')[-1]) }}" alt="Profile Picture" style="max-width: 100px; border-radius: 10px;"></small></p>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label"><i class="fas fa-user me-1"></i>Full Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                <div class="invalid-feedback">Please enter your full name.</div>
+            </div>
+            <div class="mb-3">
+                <label for="date_of_birth" class="form-label"><i class="fas fa-calendar-alt me-1"></i>Date of Birth</label>
+                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ user.date_of_birth }}" required>
+                <div class="invalid-feedback">Please select your date of birth.</div>
+            </div>
+            <div class="mb-3">
+                <label for="age" class="form-label"><i class="fas fa-user me-1"></i>Age</label>
+                <input type="number" class="form-control" id="age" name="age" min="1" max="150" value="{{ user.age }}" required>
+                <div class="invalid-feedback">Please enter a valid age (1-150).</div>
+            </div>
+            <div class="mb-3">
+                <label for="height" class="form-label"><i class="fas fa-ruler-vertical me-1"></i>Height (cm)</label>
+                <input type="number" class="form-control" id="height" name="height" step="0.1" min="0" max="300" value="{{ user.height if user.height else '' }}">
+                <div class="invalid-feedback">Please enter a valid height (0-300 cm).</div>
+            </div>
+            <div class="mb-3">
+                <label for="weight" class="form-label"><i class="fas fa-weight me-1"></i>Weight (kg)</label>
+                <input type="number" class="form-control" id="weight" name="weight" step="0.1" min="0" max="500" value="{{ user.weight if user.weight else '' }}">
+                <div class="invalid-feedback">Please enter a valid weight (0-500 kg).</div>
+            </div>
+            <div class="mb-3">
+                <label for="blood_type" class="form-label"><i class="fas fa-tint me-1"></i>Blood Type</label>
+                <select class="form-control" id="blood_type" name="blood_type" required>
+                    <option value="" disabled>Select your blood type</option>
+                    <option value="A+" {% if user.blood_type == "A+" %}selected{% endif %}>A+</option>
+                    <option value="A-" {% if user.blood_type == "A-" %}selected{% endif %}>A-</option>
+                    <option value="B+" {% if user.blood_type == "B+" %}selected{% endif %}>B+</option>
+                    <option value="B-" {% if user.blood_type == "B-" %}selected{% endif %}>B-</option>
+                    <option value="AB+" {% if user.blood_type == "AB+" %}selected{% endif %}>AB+</option>
+                    <option value="AB-" {% if user.blood_type == "AB-" %}selected{% endif %}>AB-</option>
+                    <option value="O+" {% if user.blood_type == "O+" %}selected{% endif %}>O+</option>
+                    <option value="O-" {% if user.blood_type == "O-" %}selected{% endif %}>O-</option>
+                </select>
+                <div class="invalid-feedback">Please select a valid blood type.</div>
+            </div>
+            <div class="mb-3">
+                <label for="allergies" class="form-label"><i class="fas fa-allergies me-1"></i>Allergies</label>
+                <textarea class="form-control" id="allergies" name="allergies" rows="3">{{ user.allergies }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="medications" class="form-label"><i class="fas fa-pills me-1"></i>Medications</label>
+                <textarea class="form-control" id="medications" name="medications" rows="3">{{ user.medications }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="emergency_contact_number" class="form-label"><i class="fas fa-phone-alt me-1"></i>Emergency Contacts</label>
+                <div id="emergencyContacts">
+                    {% for contact in user.emergency_contacts %}
+                    <div class="emergency-contact mb-2">
+                        <input type="tel" class="form-control mb-1" name="emergency_contact_number[]" value="{{ contact.number }}" placeholder="Phone Number (10 digits)" pattern="[0-9]{10}" required>
+                        <input type="text" class="form-control" name="emergency_contact_relation[]" value="{{ contact.relation }}" placeholder="Relation (e.g., Parent, Spouse)">
+                        <button type="button" class="btn btn-danger btn-sm mt-2 remove-contact"><i class="fas fa-trash-alt"></i> Remove</button>
+                    </div>
+                    {% endfor %}
+                    <!-- Ensure at least one contact field is present -->
+                    {% if not user.emergency_contacts %}
+                    <div class="emergency-contact mb-2">
+                        <input type="tel" class="form-control mb-1" name="emergency_contact_number[]" placeholder="Phone Number (10 digits)" pattern="[0-9]{10}" required>
+                        <input type="text" class="form-control" name="emergency_contact_relation[]" placeholder="Relation (e.g., Parent, Spouse)">
+                    </div>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn btn-outline-primary mt-2" id="addEmergencyContact"><i class="fas fa-plus me-1"></i>Add Another Contact</button>
+            </div>
+            <div class="mb-3">
+                <label for="health_conditions" class="form-label"><i class="fas fa-heartbeat me-1"></i>Health Conditions</label>
+                <textarea class="form-control" id="health_conditions" name="health_conditions" rows="3">{{ user.health_conditions }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="notes" class="form-label"><i class="fas fa-sticky-note me-1"></i>Notes</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3">{{ user.notes }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" id="submitBtn"><i class="fas fa-save me-2"></i>Update and Generate New QR Code</button>
+            <div id="loadingSpinner" class="text-center mt-3 d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Updating and Generating QR Code...</p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    // Add more emergency contacts
+    document.getElementById('addEmergencyContact').addEventListener('click', function() {
+        const div = document.createElement('div');
+        div.className = 'emergency-contact mb-2';
+        div.innerHTML = `
+            <input type="tel" class="form-control mb-1" name="emergency_contact_number[]" placeholder="Phone Number (10 digits)" pattern="[0-9]{10}">
+            <input type="text" class="form-control" name="emergency_contact_relation[]" placeholder="Relation (e.g., Parent, Spouse)">
+            <button type="button" class="btn btn-danger btn-sm mt-2 remove-contact"><i class="fas fa-trash-alt"></i> Remove</button>
+        `;
+        document.getElementById('emergencyContacts').appendChild(div);
+        div.querySelector('.remove-contact').addEventListener('click', function() {
+            div.remove();
+        });
+    });
+
+    // Remove emergency contacts
+    document.querySelectorAll('.remove-contact').forEach(button => {
+        button.addEventListener('click', function() {
+            this.parentElement.remove();
+        });
+    });
+
+    // Show loading spinner on form submission
+    document.getElementById('healthForm').addEventListener('submit', function() {
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+        loadingSpinner.classList.remove('d-none');
+    });
+
+    // Bootstrap form validation
+    (function () {
+        'use strict';
+        const form = document.getElementById('healthForm');
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    })();
+</script>
+{% endblock %}

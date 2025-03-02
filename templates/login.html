@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="card mx-auto" style="max-width: 400px;">
+    <div class="card-body">
+        <h1 class="mb-4"><i class="fas fa-sign-in-alt me-2"></i>Login</h1>
+        <form method="POST" class="needs-validation" novalidate id="loginForm">
+
+            <div class="mb-3">
+                <label for="email" class="form-label"><i class="fas fa-envelope me-1"></i>Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+                <div class="invalid-feedback">Please enter a valid email.</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label"><i class="fas fa-lock me-1"></i>Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <div class="invalid-feedback">Please enter your password.</div>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn btn-primary w-100 shift-left" id="login-btn">Login</button>
+                <div id="loadingSpinner" class="text-center mt-3 d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Logging in...</p>
+                </div>
+                <p class="mt-3 text-center msg d-none" id="msg">Login Successful!</p>
+            </div>
+            <p class="mt-3 text-center">
+                <a href="{{ url_for('signup') }}">Sign Up</a> | 
+                <a href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    // Elements
+    const btn = document.querySelector('#login-btn');
+    const btnContainer = document.querySelector('.btn-container');
+    const form = document.querySelector('#loginForm');
+    const msg = document.querySelector('#msg');
+
+    // Button shifting effect
+    function shiftButton() {
+        const positions = ['shift-left', 'shift-right', 'shift-top', 'shift-bottom'];
+        const currentPosition = positions.find(dir => btn.classList.contains(dir));
+        if (currentPosition) {
+            const currentIndex = positions.indexOf(currentPosition);
+            const nextIndex = (currentIndex + 1) % positions.length;
+            btn.classList.remove(currentPosition);
+            btn.classList.add(positions[nextIndex]);
+        }
+    }
+
+    // Show success message
+    function showMsg() {
+        msg.classList.remove('d-none');
+        btnContainer.classList.add('d-none');
+    }
+
+    // Form submission handler
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        } else {
+            event.preventDefault(); // Prevent default submission to handle manually
+            const submitBtn = document.querySelector('#login-btn');
+            const loadingSpinner = document.querySelector('#loadingSpinner');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Logging in...';
+            loadingSpinner.classList.remove('d-none');
+
+            // Simulate form submission (replace with actual submission)
+            setTimeout(() => {
+                form.submit(); // Submit the form after showing the spinner
+            }, 2000); // Delay to show the spinner for 2 seconds
+        }
+        form.classList.add('was-validated');
+    });
+
+        // Add shift button effect on hover/click for empty fields
+        btn.addEventListener('mouseenter', function() {
+        if (!form.checkValidity()) {
+            shiftButton();
+        }
+    });
+
+</script>
+{% endblock %}

@@ -1,0 +1,6 @@
+venv/
+health_data.db
+static/uploads/
+static/qr_codes/
+__pycache__/
+*.pyc

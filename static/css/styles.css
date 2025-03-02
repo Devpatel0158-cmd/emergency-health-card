@@ -1,0 +1,406 @@
+/* Import Google Fonts for modern typography */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Global styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); /* Gradient background */
+    color: #333;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Dark mode background */
+.dark-mode {
+    background: linear-gradient(135deg, #2e4b34 0%, #4a6b51 100%); /* Darker green gradient for dark mode */
+    color: #e0e0e0;
+}
+
+/* Enhance dark mode styles */
+.dark-mode .navbar {
+    background: #0d3b66; /* Darker blue for navbar */
+}
+
+.dark-mode .card {
+    background-color: #3e4e50;
+    color: #e0e0e0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .form-control {
+    background-color: #5c6b73;
+    color: #e0e0e0;
+    border-color: #90caf9;
+}
+
+.dark-mode .form-control:focus {
+    border-color: #42a5f5;
+    box-shadow: 0 0 8px rgba(66, 165, 245, 0.3);
+}
+
+.dark-mode .form-label,
+.dark-mode .card-body p,
+.dark-mode .lead,
+.dark-mode .text-muted {
+    color: #b0bec5;
+}
+
+.dark-mode .card-body strong,
+.dark-mode h1,
+.dark-mode h5 {
+    color: #90caf9;
+}
+
+.dark-mode footer {
+    background: #0d3b66;
+}
+
+.dark-mode .btn-primary {
+    background-color: #42a5f5;
+    border-color: #42a5f5;
+}
+
+.dark-mode .btn-primary:hover {
+    background-color: #1e88e5;
+    border-color: #1e88e5;
+}
+
+.dark-mode .btn-outline-primary {
+    border-color: #42a5f5;
+    color: #42a5f5;
+}
+
+.dark-mode .btn-outline-primary:hover {
+    background-color: #42a5f5;
+    color: #fff;
+}
+
+.dark-mode .btn-success {
+    background-color: #66bb6a;
+    border-color: #66bb6a;
+}
+
+.dark-mode .btn-success:hover {
+    background-color: #4caf50;
+    border-color: #4caf50;
+}
+
+.dark-mode .btn-outline-warning {
+    border-color: #ffca28;
+    color: #ffca28;
+}
+
+.dark-mode .btn-outline-warning:hover {
+    background-color: #ffca28;
+    color: #333;
+}
+
+.dark-mode .qr-code img {
+    border-color: #42a5f5;
+    background-color: #3e4e50;
+}
+
+.dark-mode a {
+    color: #42a5f5;
+}
+
+.dark-mode a:hover {
+    color: #90caf9;
+}
+
+.dark-mode .alert-success {
+    background-color: #2e4b34;
+    color: #a5d6a7;
+}
+
+.dark-mode .alert-danger {
+    background-color: #5c2e2e;
+    color: #ef9a9a;
+}
+
+.dark-mode .alert-info {
+    background-color: #2e4066;
+    color: #90caf9;
+}
+
+.dark-mode .spinner-border {
+    color: #42a5f5;
+}
+
+.dark-mode #loadingSpinner p {
+    color: #b0bec5;
+}
+
+.dark-mode .card-body img {
+    border-color: #42a5f5;
+}
+
+.dark-mode .card-body .fa-user-circle {
+    color: #42a5f5;
+}
+
+/* Button shifting effect */
+.btn-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-container .btn {
+    transition: transform 0.5s ease-in-out;
+}
+
+.shift-left {
+    transform: translateX(-50px);
+}
+
+.shift-right {
+    transform: translateX(50px);
+}
+
+.shift-top {
+    transform: translateY(-50px);
+}
+
+.shift-bottom {
+    transform: translateY(50px);
+}
+
+.msg {
+    color: #43a047;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.dark-mode .msg {
+    color: #66bb6a;
+}
+
+/* Navbar styling */
+.navbar {
+    background: #1e88e5; /* Health-themed blue */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff !important;
+    transition: color 0.3s;
+}
+
+.navbar-brand:hover {
+    color: #ffca28 !important; /* Yellow hover effect */
+}
+
+.nav-link {
+    color: #fff !important;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #ffca28 !important;
+}
+
+/* Container styling */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* Headings */
+h1 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #1e88e5;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+h5 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #d32f2f; /* Red for emphasis */
+    margin-bottom: 1rem;
+}
+
+/* Form styling */
+.form-control {
+    border: 1px solid #90caf9;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: #fff;
+}
+
+.form-control:focus {
+    border-color: #1e88e5;
+    box-shadow: 0 0 8px rgba(30, 136, 229, 0.2);
+    outline: none;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #555;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #1e88e5;
+    border-color: #1e88e5;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.btn-primary:hover {
+    background-color: #1565c0;
+    border-color: #1565c0;
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+    border-color: #1e88e5;
+    color: #1e88e5;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-outline-primary:hover {
+    background-color: #1e88e5;
+    color: #fff;
+}
+
+.btn-success {
+    background-color: #43a047;
+    border-color: #43a047;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.btn-success:hover {
+    background-color: #388e3c;
+    border-color: #388e3c;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background-color: #d32f2f;
+    border-color: #d32f2f;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.btn-danger:hover {
+    background-color: #b71c1c;
+    border-color: #b71c1c;
+}
+
+/* Card styling (for user data display) */
+.card {
+    background-color: #fff;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-body p {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.card-body strong {
+    color: #1e88e5;
+    font-weight: 500;
+}
+
+/* QR Code section */
+.qr-code img {
+    border: 5px solid #1e88e5;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Alerts */
+.alert {
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.alert-info {
+    background-color: #e3f2fd;
+    color: #1e88e5;
+}
+
+/* Links */
+a {
+    color: #1e88e5;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #1565c0;
+    text-decoration: underline;
+}
+
+/* Additional fields (for health data form) */
+.additional-field {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.additional-field input {
+    flex: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .container {
+        padding: 20px 15px;
+    }
+
+    .form-control,
+    .btn {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}
