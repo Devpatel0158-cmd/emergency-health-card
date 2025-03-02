@@ -3,22 +3,15 @@
 {% block content %}
 <div class="card mx-auto" style="max-width: 600px;" data-aos="fade-up">
     <div class="card-body text-left">
-        <h1 class="mb-4"><i class="fas fa-qrcode me-2"></i>QR Code
-            Generated</h1>
-        <p>Your health card has been created! Scan the QR code below to access
-            your emergency health information.</p>
+        <h1 class="mb-4"><i class="fas fa-qrcode me-2"></i>QR Code Generated</h1>
+        <p>Your health card has been created! Scan the QR code below to access your emergency health information.</p>
         <div class="qr-container">
-            <div class="qr-image">
-                <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code"
-                    class="img-fluid" style="max-width: 300px;">
+            <div class="qr-image text-center">
+                <div id="qrcode" class="mb-3" style="display: inline-block;"></div>
             </div>
-            <div class="qr-actions">
-                <button onclick="window.print()" class="btn btn-primary mb-2"><i
-                        class="fas fa-print me-2"></i>Print QR Code</button>
-                <a href="#"
-                    onclick="downloadQRCode('{{ qr_base64 }}', '{{ user_id }}')"
-                    class="btn btn-success"><i
-                        class="fas fa-download me-2"></i>Download QR Code</a>
+            <div class="qr-actions text-center">
+                <button onclick="window.print()" class="btn btn-primary mb-2"><i class="fas fa-print me-2"></i>Print QR Code</button>
+                <button onclick="downloadQRCode()" class="btn btn-success"><i class="fas fa-download me-2"></i>Download QR Code</button>
             </div>
         </div>
     </div>
@@ -27,20 +20,46 @@
 {% block scripts %}
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="{{ url_for('static', filename='js/qrcode.min.js') }}"></script>
 <script>
     AOS.init({
         duration: 1000,
         once: true
     });
 
-    function downloadQRCode(qrBase64, userId) {
-        const qrDataUrl = `data:image/png;base64,${qrBase64}`;
-        const a = document.createElement('a');
-        a.href = qrDataUrl;
-        a.download = `qr_code_${userId}.png`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+    // Debug: Log the qr_url to ensure it's passed correctly
+    const qrUrl = "{{ qr_url }}";
+    console.log("qrUrl:", qrUrl);
+
+    // Verify qrcode library is loaded
+    if (typeof QRCode === 'undefined') {
+        console.error("QRCode library not loaded!");
+    } else {
+        try {
+            // Generate QR code client-side
+            new QRCode(document.getElementById("qrcode"), {
+                text: qrUrl || "https://emergency-health-card.vercel.app/user/1", // Fallback URL
+                width: 300,
+                height: 300
+            });
+        } catch (error) {
+            console.error("Error generating QR code:", error);
+        }
+    }
+
+    function downloadQRCode() {
+        const qrCanvas = document.querySelector("#qrcode canvas");
+        if (qrCanvas) {
+            const qrDataUrl = qrCanvas.toDataURL("image/png");
+            const a = document.createElement('a');
+            a.href = qrDataUrl;
+            a.download = `qr_code_{{ user_id }}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } else {
+            console.error("QR code canvas not found for download.");
+        }
     }
 </script>
 {% endblock %}

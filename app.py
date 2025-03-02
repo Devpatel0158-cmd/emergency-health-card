@@ -1,9 +1,14 @@
 from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
+from flask_sqlalchemy import SQLAlchemy
+import qrcode
 import os
+import base64
+from io import BytesIO
 import json
 import logging
+from werkzeug.utils import secure_filename
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -37,39 +42,64 @@ def load_user(user_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        identifier = request.form['email']
-        password = request.form['password']
+        identifier = request.form.get('email', '')
+        password = request.form.get('password', '')
+        if not identifier or not password:
+            flash('Email/username and password are required.', 'danger')
+            return redirect(url_for('login'))
         user = next((uid for uid, data in users_auth.items() if data['email'] == identifier or data['username'] == identifier), None)
         if user and bcrypt.check_password_hash(users_auth[user]['password'], password):
             login_user(User(user))
             flash('Login Successful!', 'success')
             return redirect(url_for('index'))
-        flash('Invalid email or password', 'danger')
+        flash('Invalid email/username or password', 'danger')
     return render_template('login.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     global next_user_id
     if request.method == 'POST':
-        email = request.form['email']
-        username = request.form['username']
-        password = bcrypt.generate_password_hash(request.form['password']).decode('utf-8')
-        if any(data['email'] == email for data in users_auth.values()):
-            flash('Email already exists', 'danger')
-        elif any(data['username'] == username for data in users_auth.values()):
-            flash('Username already exists', 'danger')
-        else:
+        try:
+            email = request.form.get('email', '').strip()
+            username = request.form.get('username', '').strip()
+            password = request.form.get('password', '')
+
+            # Validate required fields
+            if not email or not username or not password:
+                flash('Email, username, and password are required.', 'danger')
+                return redirect(url_for('signup'))
+
+            # Check for existing email or username
+            if any(data['email'] == email for data in users_auth.values()):
+                flash('Email already exists', 'danger')
+                return redirect(url_for('signup'))
+            if any(data['username'] == username for data in users_auth.values()):
+                flash('Username already exists', 'danger')
+                return redirect(url_for('signup'))
+
+            # Hash the password
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+            # Create new user
             user_id = next_user_id
-            users_auth[user_id] = {'email': email, 'username': username, 'password': password}
+            users_auth[user_id] = {'email': email, 'username': username, 'password': hashed_password}
             next_user_id += 1
+
             flash('Account created! Please log in.', 'success')
             return redirect(url_for('login'))
+        except Exception as e:
+            logger.error(f"Error in signup: {str(e)}", exc_info=True)
+            flash('An error occurred while signing up. Please try again.', 'danger')
+            return redirect(url_for('signup'))
     return render_template('signup.html')
 
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
-        email = request.form['email']
+        email = request.form.get('email', '')
+        if not email:
+            flash('Email is required.', 'danger')
+            return redirect(url_for('forgot_password'))
         flash('Password reset instructions sent to your email (simulated).', 'info')
         return redirect(url_for('login'))
     return render_template('forgot_password.html')
@@ -96,12 +126,12 @@ def create_health_card():
     if request.method == 'POST':
         try:
             # Validate and parse form data with defaults
-            name = request.form['name']
+            name = request.form.get('name', '').strip()
             age = int(request.form.get('age', 0)) if request.form.get('age') and request.form['age'].isdigit() else 0
             date_of_birth = request.form.get('date_of_birth', '')
             height = float(request.form.get('height', 0)) if request.form.get('height') and request.form['height'].replace('.', '', 1).isdigit() else None
             weight = float(request.form.get('weight', 0)) if request.form.get('weight') and request.form['weight'].replace('.', '', 1).isdigit() else None
-            blood_type = request.form['blood_type']
+            blood_type = request.form.get('blood_type', '').strip()
             allergies = request.form.get('allergies', '')
             medications = request.form.get('medications', '')
             emergency_numbers = request.form.getlist('emergency_contact_number[]')
@@ -140,6 +170,11 @@ def create_health_card():
             blood_pressure = request.form.get('blood_pressure', '')
             heart_rate = int(request.form.get('heart_rate', 0)) if request.form.get('heart_rate') and request.form['heart_rate'].isdigit() else None
             oxygen_saturation = int(request.form.get('oxygen_saturation', 0)) if request.form.get('oxygen_saturation') and request.form['oxygen_saturation'].isdigit() else None
+
+            # Validate required fields
+            if not name or not age or not blood_type:
+                flash('Name, age, and blood type are required.', 'danger')
+                return redirect(url_for('create_health_card'))
 
             card_id = next_card_id
             health_cards[card_id] = {
@@ -206,12 +241,12 @@ def edit_health_card(user_id):
 
     if request.method == 'POST':
         try:
-            name = request.form['name']
+            name = request.form.get('name', '').strip()
             age = int(request.form.get('age', 0)) if request.form.get('age') and request.form['age'].isdigit() else 0
             date_of_birth = request.form.get('date_of_birth', '')
             height = float(request.form.get('height', 0)) if request.form.get('height') and request.form['height'].replace('.', '', 1).isdigit() else None
             weight = float(request.form.get('weight', 0)) if request.form.get('weight') and request.form['weight'].replace('.', '', 1).isdigit() else None
-            blood_type = request.form['blood_type']
+            blood_type = request.form.get('blood_type', '').strip()
             allergies = request.form.get('allergies', '')
             medications = request.form.get('medications', '')
             emergency_numbers = request.form.getlist('emergency_contact_number[]')
@@ -250,6 +285,11 @@ def edit_health_card(user_id):
             blood_pressure = request.form.get('blood_pressure', '')
             heart_rate = int(request.form.get('heart_rate', 0)) if request.form.get('heart_rate') and request.form['heart_rate'].isdigit() else None
             oxygen_saturation = int(request.form.get('oxygen_saturation', 0)) if request.form.get('oxygen_saturation') and request.form['oxygen_saturation'].isdigit() else None
+
+            # Validate required fields
+            if not name or not age or not blood_type:
+                flash('Name, age, and blood type are required.', 'danger')
+                return redirect(url_for('edit_health_card', user_id=user_id))
 
             health_cards[user_id] = {
                 'id': user_id,
