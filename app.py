@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_from_directory, redirect, url_for, flash, jsonify
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import Bcrypt
 import qrcode
@@ -12,11 +12,7 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# Define base paths for static files in /tmp
-STATIC_UPLOADS_PATH = '/tmp/static/uploads'
-STATIC_QR_CODES_PATH = '/tmp/static/qr_codes'
 
-# Simulate user data in memory for demo purposes
 users_auth = {}  # Stores user authentication data: {user_id: {'email': ..., 'password': ...}}
 users = {}       # Stores health card data: {user_id: {...}}
 next_user_id = 1
@@ -32,11 +28,6 @@ def load_user(user_id):
     if int(user_id) in users_auth:
         return User(int(user_id))
     return None
-
-# Route to serve uploaded images from /tmp/static/uploads
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(STATIC_UPLOADS_PATH, filename)
 
 # Routes
 @app.route('/login', methods=['GET', 'POST'])
@@ -124,14 +115,6 @@ def create_health_card():
         health_conditions = request.form.get('health_conditions', '')
         notes = request.form.get('notes', '')
 
-        # Handle profile picture upload
-        profile_picture = request.files.get('profile_picture')
-        profile_picture_path = ''
-        if profile_picture:
-            os.makedirs(STATIC_UPLOADS_PATH, exist_ok=True)
-            profile_picture_path = f"{STATIC_UPLOADS_PATH}/{current_user.id}_{profile_picture.filename}"
-            profile_picture.save(profile_picture_path)
-
         user_id = next_health_card_id
         users[user_id] = {
             'id': user_id,
@@ -148,17 +131,18 @@ def create_health_card():
             'emergency_contacts': emergency_contacts_json,
             'health_conditions': health_conditions,
             'notes': notes,
-            'profile_picture': profile_picture_path
+            'profile_picture': None  # Removed profile picture support
         }
         next_health_card_id += 1
 
+        # Generate QR code with the correct Vercel URL
         qr_url = f"https://emergency-health-card.vercel.app/user/{user_id}"
         qr = qrcode.make(qr_url)
-        qr_path = f"{STATIC_QR_CODES_PATH}/qr_{user_id}.png"
-        os.makedirs(os.path.dirname(qr_path), exist_ok=True)
-        qr.save(qr_path)
+        buffer = BytesIO()
+        qr.save(buffer, format='PNG')
+        qr_base64 = buffer.getvalue().hex()  # Store as hex string for simplicity
 
-        return render_template('qr.html', qr_path=qr_path, user_id=user_id)
+        return render_template('qr.html', qr_base64=qr_base64, user_id=user_id)
     return render_template('index.html')
 
 @app.route('/edit/<int:user_id>', methods=['GET', 'POST'])
@@ -200,14 +184,6 @@ def edit_health_card(user_id):
         health_conditions = request.form.get('health_conditions', '')
         notes = request.form.get('notes', '')
 
-        # Handle profile picture upload
-        profile_picture = request.files.get('profile_picture')
-        profile_picture_path = user_data['profile_picture']
-        if profile_picture:
-            os.makedirs(STATIC_UPLOADS_PATH, exist_ok=True)
-            profile_picture_path = f"{STATIC_UPLOADS_PATH}/{current_user.id}_{profile_picture.filename}"
-            profile_picture.save(profile_picture_path)
-
         users[user_id] = {
             'id': user_id,
             'user_id': current_user.id,
@@ -223,17 +199,18 @@ def edit_health_card(user_id):
             'emergency_contacts': emergency_contacts_json,
             'health_conditions': health_conditions,
             'notes': notes,
-            'profile_picture': profile_picture_path
+            'profile_picture': None  # Removed profile picture support
         }
 
+        # Generate QR code with the correct Vercel URL
         qr_url = f"https://emergency-health-card.vercel.app/user/{user_id}"
         qr = qrcode.make(qr_url)
-        qr_path = f"{STATIC_QR_CODES_PATH}/qr_{user_id}.png"
-        os.makedirs(os.path.dirname(qr_path), exist_ok=True)
-        qr.save(qr_path)
+        buffer = BytesIO()
+        qr.save(buffer, format='PNG')
+        qr_base64 = buffer.getvalue().hex()
 
         flash('Health card updated successfully!', 'success')
-        return render_template('qr.html', qr_path=qr_path, user_id=user_id)
+        return render_template('qr.html', qr_base64=qr_base64, user_id=user_id)
 
     return render_template('edit_health_card.html', user=user_data)
 
@@ -258,7 +235,7 @@ def get_user_data(user_id):
         'emergency_contacts': json.loads(user['emergency_contacts']) if user['emergency_contacts'] else [],
         'health_conditions': user['health_conditions'],
         'notes': user['notes'],
-        'profile_picture': user['profile_picture']
+        'profile_picture': None  # Removed profile picture support
     }
     return render_template('user_data.html', user=user_data)
 
