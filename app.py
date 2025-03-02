@@ -3,8 +3,10 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_bcrypt import Bcrypt
 import qrcode
 import os
+import base64
 from io import BytesIO
 import json
+import logging
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'f8754ee9be88b3f0575e1e1b1a2271c9943f0948e94674ad')
@@ -12,7 +14,11 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
+# Simulate user data in memory for demo purposes
 users_auth = {}  # Stores user authentication data: {user_id: {'email': ..., 'password': ...}}
 users = {}       # Stores health card data: {user_id: {...}}
 next_user_id = 1
@@ -87,62 +93,68 @@ def index():
 def create_health_card():
     global next_health_card_id
     if request.method == 'POST':
-        name = request.form['name']
-        age = request.form['age']
-        date_of_birth = request.form.get('date_of_birth', '')
-        height = float(request.form['height']) if request.form.get('height') else None
-        weight = float(request.form['weight']) if request.form.get('weight') else None
-        blood_type = request.form['blood_type']
-        allergies = request.form.get('allergies', '')
-        medications = request.form.get('medications', '')
-        
-        # Process multiple emergency contacts
-        emergency_numbers = request.form.getlist('emergency_contact_number[]')
-        emergency_relations = request.form.getlist('emergency_contact_relation[]')
-        emergency_contacts = []
-        
-        for i in range(len(emergency_numbers)):
-            if emergency_numbers[i]:
-                contact = {
-                    "number": emergency_numbers[i],
-                    "relation": emergency_relations[i] if i < len(emergency_relations) else ""
-                }
-                emergency_contacts.append(contact)
-        
-        emergency_contacts_json = json.dumps(emergency_contacts)
-        emergency_contact = emergency_numbers[0] if emergency_numbers else ""
-        
-        health_conditions = request.form.get('health_conditions', '')
-        notes = request.form.get('notes', '')
+        try:
+            name = request.form['name']
+            age = request.form['age']
+            date_of_birth = request.form.get('date_of_birth', '')
+            height = float(request.form['height']) if request.form.get('height') else None
+            weight = float(request.form['weight']) if request.form.get('weight') else None
+            blood_type = request.form['blood_type']
+            allergies = request.form.get('allergies', '')
+            medications = request.form.get('medications', '')
+            
+            # Process multiple emergency contacts
+            emergency_numbers = request.form.getlist('emergency_contact_number[]')
+            emergency_relations = request.form.getlist('emergency_contact_relation[]')
+            emergency_contacts = []
+            
+            for i in range(len(emergency_numbers)):
+                if emergency_numbers[i]:
+                    contact = {
+                        "number": emergency_numbers[i],
+                        "relation": emergency_relations[i] if i < len(emergency_relations) else ""
+                    }
+                    emergency_contacts.append(contact)
+            
+            emergency_contacts_json = json.dumps(emergency_contacts)
+            emergency_contact = emergency_numbers[0] if emergency_numbers else ""
+            
+            health_conditions = request.form.get('health_conditions', '')
+            notes = request.form.get('notes', '')
 
-        user_id = next_health_card_id
-        users[user_id] = {
-            'id': user_id,
-            'user_id': current_user.id,
-            'name': name,
-            'age': age,
-            'date_of_birth': date_of_birth,
-            'height': height,
-            'weight': weight,
-            'blood_type': blood_type,
-            'allergies': allergies,
-            'medications': medications,
-            'emergency_contact': emergency_contact,
-            'emergency_contacts': emergency_contacts_json,
-            'health_conditions': health_conditions,
-            'notes': notes,
-            'profile_picture': None  # Removed profile picture support
-        }
-        next_health_card_id += 1
+            user_id = next_health_card_id
+            users[user_id] = {
+                'id': user_id,
+                'user_id': current_user.id,
+                'name': name,
+                'age': age,
+                'date_of_birth': date_of_birth,
+                'height': height,
+                'weight': weight,
+                'blood_type': blood_type,
+                'allergies': allergies,
+                'medications': medications,
+                'emergency_contact': emergency_contact,
+                'emergency_contacts': emergency_contacts_json,
+                'health_conditions': health_conditions,
+                'notes': notes,
+                'profile_picture': None  # Removed profile picture support
+            }
+            next_health_card_id += 1
 
-        # Generate QR code with the correct Vercel URL
-        qr_url = f"https://emergency-health-card.vercel.app/user/{user_id}"
-        qr = qrcode.make(qr_url)
-        buffer = BytesIO()
-        qr.save(buffer, format='PNG')
-        qr_base64 = buffer.getvalue().hex()  # Store as hex string for simplicity
-
-        return render_template('qr.html', qr_base64=qr_base64, user_id=user_id)
+            # Generate QR code with the correct Vercel URL
+            qr_url = f"https://emergency-health-card.vercel.app/user/{user_id}"
+            logger.debug(f"Generating QR code for URL: {qr_url}")
+            qr = qrcode.make(qr_url)
+            buffer = BytesIO()
+            qr.save(buffer, format='PNG')
+            qr_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')  # Use base64 encoding
+            
+            return render_template('qr.html', qr_base64=qr_base64, user_id=user_id)
+        except Exception as e:
+            logger.error(f"Error in create_health_card: {str(e)}", exc_info=True)
+            flash('An error occurred while generating the QR code.', 'danger')
+            return redirect(url_for('index'))
     return render_template('index.html')
 
 @app.route('/edit/<int:user_id>', methods=['GET', 'POST'])
@@ -156,61 +168,67 @@ def edit_health_card(user_id):
     user_data = users[user_id]
 
     if request.method == 'POST':
-        name = request.form['name']
-        age = request.form['age']
-        date_of_birth = request.form.get('date_of_birth', '')
-        height = float(request.form['height']) if request.form.get('height') else None
-        weight = float(request.form['weight']) if request.form.get('weight') else None
-        blood_type = request.form['blood_type']
-        allergies = request.form.get('allergies', '')
-        medications = request.form.get('medications', '')
-        
-        # Process multiple emergency contacts
-        emergency_numbers = request.form.getlist('emergency_contact_number[]')
-        emergency_relations = request.form.getlist('emergency_contact_relation[]')
-        emergency_contacts = []
-        
-        for i in range(len(emergency_numbers)):
-            if emergency_numbers[i]:
-                contact = {
-                    "number": emergency_numbers[i],
-                    "relation": emergency_relations[i] if i < len(emergency_relations) else ""
-                }
-                emergency_contacts.append(contact)
-        
-        emergency_contacts_json = json.dumps(emergency_contacts)
-        emergency_contact = emergency_numbers[0] if emergency_numbers else ""
-        
-        health_conditions = request.form.get('health_conditions', '')
-        notes = request.form.get('notes', '')
+        try:
+            name = request.form['name']
+            age = request.form['age']
+            date_of_birth = request.form.get('date_of_birth', '')
+            height = float(request.form['height']) if request.form.get('height') else None
+            weight = float(request.form['weight']) if request.form.get('weight') else None
+            blood_type = request.form['blood_type']
+            allergies = request.form.get('allergies', '')
+            medications = request.form.get('medications', '')
+            
+            # Process multiple emergency contacts
+            emergency_numbers = request.form.getlist('emergency_contact_number[]')
+            emergency_relations = request.form.getlist('emergency_contact_relation[]')
+            emergency_contacts = []
+            
+            for i in range(len(emergency_numbers)):
+                if emergency_numbers[i]:
+                    contact = {
+                        "number": emergency_numbers[i],
+                        "relation": emergency_relations[i] if i < len(emergency_relations) else ""
+                    }
+                    emergency_contacts.append(contact)
+            
+            emergency_contacts_json = json.dumps(emergency_contacts)
+            emergency_contact = emergency_numbers[0] if emergency_numbers else ""
+            
+            health_conditions = request.form.get('health_conditions', '')
+            notes = request.form.get('notes', '')
 
-        users[user_id] = {
-            'id': user_id,
-            'user_id': current_user.id,
-            'name': name,
-            'age': age,
-            'date_of_birth': date_of_birth,
-            'height': height,
-            'weight': weight,
-            'blood_type': blood_type,
-            'allergies': allergies,
-            'medications': medications,
-            'emergency_contact': emergency_contact,
-            'emergency_contacts': emergency_contacts_json,
-            'health_conditions': health_conditions,
-            'notes': notes,
-            'profile_picture': None  # Removed profile picture support
-        }
+            users[user_id] = {
+                'id': user_id,
+                'user_id': current_user.id,
+                'name': name,
+                'age': age,
+                'date_of_birth': date_of_birth,
+                'height': height,
+                'weight': weight,
+                'blood_type': blood_type,
+                'allergies': allergies,
+                'medications': medications,
+                'emergency_contact': emergency_contact,
+                'emergency_contacts': emergency_contacts_json,
+                'health_conditions': health_conditions,
+                'notes': notes,
+                'profile_picture': None  # Removed profile picture support
+            }
 
-        # Generate QR code with the correct Vercel URL
-        qr_url = f"https://emergency-health-card.vercel.app/user/{user_id}"
-        qr = qrcode.make(qr_url)
-        buffer = BytesIO()
-        qr.save(buffer, format='PNG')
-        qr_base64 = buffer.getvalue().hex()
+            # Generate QR code with the correct Vercel URL
+            qr_url = f"https://emergency-health-card.vercel.app/user/{user_id}"
+            logger.debug(f"Generating QR code for URL: {qr_url}")
+            qr = qrcode.make(qr_url)
+            buffer = BytesIO()
+            qr.save(buffer, format='PNG')
+            qr_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')  # Use base64 encoding
 
-        flash('Health card updated successfully!', 'success')
-        return render_template('qr.html', qr_base64=qr_base64, user_id=user_id)
+            flash('Health card updated successfully!', 'success')
+            return render_template('qr.html', qr_base64=qr_base64, user_id=user_id)
+        except Exception as e:
+            logger.error(f"Error in edit_health_card: {str(e)}", exc_info=True)
+            flash('An error occurred while generating the QR code.', 'danger')
+            return redirect(url_for('index'))
 
     return render_template('edit_health_card.html', user=user_data)
 
