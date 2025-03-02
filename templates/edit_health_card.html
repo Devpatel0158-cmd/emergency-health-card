@@ -1,94 +1,349 @@
 {% extends "base.html" %}
 {% block title %}Edit Health Card{% endblock %}
+<!-- Straightforward title, might tweak later -->
+
 {% block content %}
-<div class="card mx-auto">
-    <div class="card-body">
-        <h1 class="mb-4"><i class="fas fa-edit me-2"></i>Edit Health Information</h1>
-        <form method="POST" id="healthForm" class="needs-validation" novalidate enctype="multipart/form-data">
+<!-- Centered card - max-width to keep it readable -->
+<div class="card mx-auto" style="max-width: 600px;">
+    <div class="card-body text-left">
+        <!-- Switched to text-left after testing center alignment -->
+        <!-- Header with icon - edit icon fits the vibe -->
+        <h1 class="mb-4"><i class="fas fa-edit me-2"></i>Edit Health
+            Information</h1>
+
+        <!-- Form setup - added enctype for file upload, took me a sec to remember -->
+        <form method="POST" id="healthForm" class="needs-validation" novalidate
+            enctype="multipart/form-data">
+            <!-- Section banner - red to stand out, health emergency feel -->
+            <h5 class="section-banner">Basic Personal Information</h5>
+
+            <!-- Profile picture - added preview after upload worked in Flask -->
             <div class="mb-3">
-                <label for="profile_picture" class="form-label"><i class="fas fa-image me-1"></i>Profile Picture</label>
-                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                <label for="profile_picture" class="form-label"><i
+                        class="fas fa-image me-1"></i>Profile Picture</label>
+                <input type="file" class="form-control" id="profile_picture"
+                    name="profile_picture" accept="image/*">
                 {% if user.profile_picture %}
-                <p class="mt-2"><small>Current Picture: <img src="{{ url_for('uploaded_file', filename=user.profile_picture.split('/')[-1]) }}" alt="Profile Picture" style="max-width: 100px; border-radius: 10px;"></small></p>
+                <!-- Showing current pic - had to debug the path with url_for -->
+                <p class="mt-2"><small>Current Picture: <img
+                            src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}"
+                            alt="Profile Picture"
+                            style="max-width: 100px; border-radius: 5px;"></small></p>
                 {% endif %}
             </div>
+
+            <!-- Name field - required, basic stuff -->
             <div class="mb-3">
-                <label for="name" class="form-label"><i class="fas fa-user me-1"></i>Full Name</label>
-                <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                <label for="name" class="form-label"><i
+                        class="fas fa-user me-1"></i>Full Name</label>
+                <input type="text" class="form-control" id="name" name="name"
+                    value="{{ user.name }}" required>
                 <div class="invalid-feedback">Please enter your full name.</div>
             </div>
+
+            <!-- Date of birth - switched to date input for ease -->
             <div class="mb-3">
-                <label for="date_of_birth" class="form-label"><i class="fas fa-calendar-alt me-1"></i>Date of Birth</label>
-                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ user.date_of_birth }}" required>
-                <div class="invalid-feedback">Please select your date of birth.</div>
+                <label for="date_of_birth" class="form-label"><i
+                        class="fas fa-calendar-alt me-1"></i>Date of
+                    Birth</label>
+                <input type="date" class="form-control" id="date_of_birth"
+                    name="date_of_birth" value="{{ user.date_of_birth }}"
+                    required>
+                <div class="invalid-feedback">Please select your date of
+                    birth.</div>
             </div>
+
+            <!-- Age - added min/max after testing edge cases -->
             <div class="mb-3">
-                <label for="age" class="form-label"><i class="fas fa-user me-1"></i>Age</label>
-                <input type="number" class="form-control" id="age" name="age" min="1" max="150" value="{{ user.age }}" required>
-                <div class="invalid-feedback">Please enter a valid age (1-150).</div>
+                <label for="age" class="form-label"><i
+                        class="fas fa-user me-1"></i>Age</label>
+                <input type="number" class="form-control" id="age" name="age"
+                    min="1" max="150" value="{{ user.age }}" required>
+                <div class="invalid-feedback">Please enter a valid age
+                    (1-150).</div>
             </div>
+
+            <!-- Gender - added more options for inclusivity -->
             <div class="mb-3">
-                <label for="height" class="form-label"><i class="fas fa-ruler-vertical me-1"></i>Height (cm)</label>
-                <input type="number" class="form-control" id="height" name="height" step="0.1" min="0" max="300" value="{{ user.height if user.height else '' }}">
-                <div class="invalid-feedback">Please enter a valid height (0-300 cm).</div>
-            </div>
-            <div class="mb-3">
-                <label for="weight" class="form-label"><i class="fas fa-weight me-1"></i>Weight (kg)</label>
-                <input type="number" class="form-control" id="weight" name="weight" step="0.1" min="0" max="500" value="{{ user.weight if user.weight else '' }}">
-                <div class="invalid-feedback">Please enter a valid weight (0-500 kg).</div>
-            </div>
-            <div class="mb-3">
-                <label for="blood_type" class="form-label"><i class="fas fa-tint me-1"></i>Blood Type</label>
-                <select class="form-control" id="blood_type" name="blood_type" required>
-                    <option value="" disabled>Select your blood type</option>
-                    <option value="A+" {% if user.blood_type == "A+" %}selected{% endif %}>A+</option>
-                    <option value="A-" {% if user.blood_type == "A-" %}selected{% endif %}>A-</option>
-                    <option value="B+" {% if user.blood_type == "B+" %}selected{% endif %}>B+</option>
-                    <option value="B-" {% if user.blood_type == "B-" %}selected{% endif %}>B-</option>
-                    <option value="AB+" {% if user.blood_type == "AB+" %}selected{% endif %}>AB+</option>
-                    <option value="AB-" {% if user.blood_type == "AB-" %}selected{% endif %}>AB-</option>
-                    <option value="O+" {% if user.blood_type == "O+" %}selected{% endif %}>O+</option>
-                    <option value="O-" {% if user.blood_type == "O-" %}selected{% endif %}>O-</option>
+                <label for="gender" class="form-label"><i
+                        class="fas fa-venus-mars me-1"></i>Gender</label>
+                <select class="form-control" id="gender" name="gender" required>
+                    <option value disabled>Select your gender</option>
+                    <option value="Male" {% if user.gender == "Male"
+                        %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if user.gender == "Female"
+                        %}selected{% endif %}>Female</option>
+                    <option value="Non-binary" {% if user.gender == "Non-binary"
+                        %}selected{% endif %}>Non-binary</option>
+                    <option value="Prefer not to say" {% if user.gender ==
+                        "Prefer not to say" %}selected{% endif %}>Prefer not to
+                        say</option>
                 </select>
-                <div class="invalid-feedback">Please select a valid blood type.</div>
+                <div class="invalid-feedback">Please select your gender.</div>
+            </div>
+
+            <!-- Address - textarea for flexibility -->
+            <div class="mb-3">
+                <label for="address" class="form-label"><i
+                        class="fas fa-map-marker-alt me-1"></i>Address</label>
+                <textarea class="form-control" id="address" name="address"
+                    rows="2">{{ user.address }}</textarea>
+            </div>
+
+            <!-- Contact number - pattern for 10 digits, took some trial to get right -->
+            <div class="mb-3">
+                <label for="contact_number" class="form-label"><i
+                        class="fas fa-phone me-1"></i>Contact Number</label>
+                <input type="tel" class="form-control" id="contact_number"
+                    name="contact_number" pattern="[0-9]{10}"
+                    value="{{ user.contact_number }}"
+                    placeholder="10-digit phone number" required>
+                <div class="invalid-feedback">Please enter a valid 10-digit
+                    phone number.</div>
+            </div>
+
+            <!-- Physical Characteristics section -->
+            <h5 class="section-banner">Physical Characteristics</h5>
+            <div class="mb-3">
+                <label for="height" class="form-label"><i
+                        class="fas fa-ruler-vertical me-1"></i>Height
+                    (cm)</label>
+                <input type="number" class="form-control" id="height"
+                    name="height" step="0.1" min="0" max="300"
+                    value="{{ user.height if user.height else '' }}">
+                <div class="invalid-feedback">Please enter a valid height (0-300
+                    cm).</div>
             </div>
             <div class="mb-3">
-                <label for="allergies" class="form-label"><i class="fas fa-allergies me-1"></i>Allergies</label>
-                <textarea class="form-control" id="allergies" name="allergies" rows="3">{{ user.allergies }}</textarea>
+                <label for="weight" class="form-label"><i
+                        class="fas fa-weight me-1"></i>Weight (kg)</label>
+                <input type="number" class="form-control" id="weight"
+                    name="weight" step="0.1" min="0" max="500"
+                    value="{{ user.weight if user.weight else '' }}">
+                <div class="invalid-feedback">Please enter a valid weight (0-500
+                    kg).</div>
+            </div>
+            <!-- Blood type - comprehensive list, required for health card -->
+            <div class="mb-3">
+                <label for="blood_type" class="form-label"><i
+                        class="fas fa-tint me-1"></i>Blood Type</label>
+                <select class="form-control" id="blood_type" name="blood_type"
+                    required>
+                    <option value disabled>Select your blood type</option>
+                    <option value="A+" {% if user.blood_type == "A+"
+                        %}selected{% endif %}>A+</option>
+                    <option value="A-" {% if user.blood_type == "A-"
+                        %}selected{% endif %}>A-</option>
+                    <option value="B+" {% if user.blood_type == "B+"
+                        %}selected{% endif %}>B+</option>
+                    <option value="B-" {% if user.blood_type == "B-"
+                        %}selected{% endif %}>B-</option>
+                    <option value="AB+" {% if user.blood_type == "AB+"
+                        %}selected{% endif %}>AB+</option>
+                    <option value="AB-" {% if user.blood_type == "AB-"
+                        %}selected{% endif %}>AB-</option>
+                    <option value="O+" {% if user.blood_type == "O+"
+                        %}selected{% endif %}>O+</option>
+                    <option value="O-" {% if user.blood_type == "O-"
+                        %}selected{% endif %}>O-</option>
+                </select>
+                <div class="invalid-feedback">Please select a valid blood
+                    type.</div>
             </div>
             <div class="mb-3">
-                <label for="medications" class="form-label"><i class="fas fa-pills me-1"></i>Medications</label>
-                <textarea class="form-control" id="medications" name="medications" rows="3">{{ user.medications }}</textarea>
+                <label for="eye_color" class="form-label"><i
+                        class="fas fa-eye me-1"></i>Eye Color</label>
+                <input type="text" class="form-control" id="eye_color"
+                    name="eye_color" value="{{ user.eye_color }}">
             </div>
             <div class="mb-3">
-                <label for="emergency_contact_number" class="form-label"><i class="fas fa-phone-alt me-1"></i>Emergency Contacts</label>
+                <label for="hair_color" class="form-label"><i
+                        class="fas fa-tint me-1"></i>Hair Color</label>
+                <input type="text" class="form-control" id="hair_color"
+                    name="hair_color" value="{{ user.hair_color }}">
+            </div>
+
+            <!-- Medical History section - lots of textareas for detail -->
+            <h5 class="section-banner">Medical History</h5>
+            <div class="mb-3">
+                <label for="allergies" class="form-label"><i
+                        class="fas fa-allergies me-1"></i>Allergies</label>
+                <textarea class="form-control" id="allergies" name="allergies"
+                    rows="2">{{ user.allergies }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="medications" class="form-label"><i
+                        class="fas fa-pills me-1"></i>Medications</label>
+                <textarea class="form-control" id="medications"
+                    name="medications"
+                    rows="2">{{ user.medications }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="health_conditions" class="form-label"><i
+                        class="fas fa-heartbeat me-1"></i>Current Health
+                    Conditions</label>
+                <textarea class="form-control" id="health_conditions"
+                    name="health_conditions"
+                    rows="2">{{ user.health_conditions }}</textarea>
+            </div>
+            <!-- Added more fields after realizing how much info might be useful -->
+            <div class="mb-3">
+                <label for="past_surgeries" class="form-label"><i
+                        class="fas fa-procedures me-1"></i>Past
+                    Surgeries</label>
+                <textarea class="form-control" id="past_surgeries"
+                    name="past_surgeries"
+                    rows="2">{{ user.past_surgeries }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="chronic_illnesses" class="form-label"><i
+                        class="fas fa-disease me-1"></i>Chronic
+                    Illnesses</label>
+                <textarea class="form-control" id="chronic_illnesses"
+                    name="chronic_illnesses"
+                    rows="2">{{ user.chronic_illnesses }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="family_medical_history" class="form-label"><i
+                        class="fas fa-users me-1"></i>Family Medical
+                    History</label>
+                <textarea class="form-control" id="family_medical_history"
+                    name="family_medical_history"
+                    rows="2">{{ user.family_medical_history }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="immunization_history" class="form-label"><i
+                        class="fas fa-syringe me-1"></i>Immunization
+                    History</label>
+                <textarea class="form-control" id="immunization_history"
+                    name="immunization_history"
+                    rows="2">{{ user.immunization_history }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="hospitalization_history" class="form-label"><i
+                        class="fas fa-hospital me-1"></i>Hospitalization
+                    History</label>
+                <textarea class="form-control" id="hospitalization_history"
+                    name="hospitalization_history"
+                    rows="2">{{ user.hospitalization_history }}</textarea>
+            </div>
+
+            <!-- Lifestyle Factors - optional but useful for emergencies -->
+            <h5 class="section-banner">Lifestyle Factors</h5>
+            <div class="mb-3">
+                <label for="smoking_status" class="form-label"><i
+                        class="fas fa-smoking me-1"></i>Smoking Status</label>
+                <select class="form-control" id="smoking_status"
+                    name="smoking_status">
+                    <option value disabled>Select status</option>
+                    <option value="Current" {% if user.smoking_status ==
+                        "Current" %}selected{% endif %}>Current</option>
+                    <option value="Former" {% if user.smoking_status == "Former"
+                        %}selected{% endif %}>Former</option>
+                    <option value="Never" {% if user.smoking_status == "Never"
+                        %}selected{% endif %}>Never</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="alcohol_consumption" class="form-label"><i
+                        class="fas fa-glass-martini me-1"></i>Alcohol
+                    Consumption</label>
+                <input type="text" class="form-control" id="alcohol_consumption"
+                    name="alcohol_consumption"
+                    value="{{ user.alcohol_consumption }}">
+            </div>
+            <div class="mb-3">
+                <label for="drug_use" class="form-label"><i
+                        class="fas fa-cannabis me-1"></i>Drug Use</label>
+                <input type="text" class="form-control" id="drug_use"
+                    name="drug_use" value="{{ user.drug_use }}">
+            </div>
+            <div class="mb-3">
+                <label for="exercise_routine" class="form-label"><i
+                        class="fas fa-running me-1"></i>Exercise Routine</label>
+                <input type="text" class="form-control" id="exercise_routine"
+                    name="exercise_routine" value="{{ user.exercise_routine }}">
+            </div>
+            <div class="mb-3">
+                <label for="diet_preferences" class="form-label"><i
+                        class="fas fa-utensils me-1"></i>Diet
+                    Preferences</label>
+                <input type="text" class="form-control" id="diet_preferences"
+                    name="diet_preferences" value="{{ user.diet_preferences }}">
+            </div>
+
+            <!-- Emergency Information - dynamic contacts were a pain to figure out -->
+            <h5 class="section-banner">Emergency Information</h5>
+            <div class="mb-3">
+                <label for="emergency_contact_number" class="form-label"><i
+                        class="fas fa-phone-alt me-1"></i>Emergency
+                    Contacts</label>
                 <div id="emergencyContacts">
-                    {% for contact in user.emergency_contacts %}
-                    <div class="emergency-contact mb-2">
-                        <input type="tel" class="form-control mb-1" name="emergency_contact_number[]" value="{{ contact.number }}" placeholder="Phone Number (10 digits)" pattern="[0-9]{10}" required>
-                        <input type="text" class="form-control" name="emergency_contact_relation[]" value="{{ contact.relation }}" placeholder="Relation (e.g., Parent, Spouse)">
-                        <button type="button" class="btn btn-danger btn-sm mt-2 remove-contact"><i class="fas fa-trash-alt"></i> Remove</button>
-                    </div>
-                    {% endfor %}
-                    <!-- Ensure at least one contact field is present -->
-                    {% if not user.emergency_contacts %}
-                    <div class="emergency-contact mb-2">
-                        <input type="tel" class="form-control mb-1" name="emergency_contact_number[]" placeholder="Phone Number (10 digits)" pattern="[0-9]{10}" required>
-                        <input type="text" class="form-control" name="emergency_contact_relation[]" placeholder="Relation (e.g., Parent, Spouse)">
-                    </div>
-                    {% endif %}
+                    <!-- Dynamic fields added via JS below - took some debugging -->
                 </div>
-                <button type="button" class="btn btn-outline-primary mt-2" id="addEmergencyContact"><i class="fas fa-plus me-1"></i>Add Another Contact</button>
+                <!-- Add button - primary outline to match theme -->
+                <button type="button" class="btn btn-outline-primary mt-2"
+                    id="addEmergencyContact"><i class="fas fa-plus me-1"></i>Add
+                    Another Contact</button>
             </div>
             <div class="mb-3">
-                <label for="health_conditions" class="form-label"><i class="fas fa-heartbeat me-1"></i>Health Conditions</label>
-                <textarea class="form-control" id="health_conditions" name="health_conditions" rows="3">{{ user.health_conditions }}</textarea>
+                <label for="primary_care_physician" class="form-label"><i
+                        class="fas fa-user-md me-1"></i>Primary Care
+                    Physician</label>
+                <input type="text" class="form-control"
+                    id="primary_care_physician" name="primary_care_physician"
+                    value="{{ user.primary_care_physician }}"
+                    placeholder="Name, Phone, Address">
             </div>
             <div class="mb-3">
-                <label for="notes" class="form-label"><i class="fas fa-sticky-note me-1"></i>Notes</label>
-                <textarea class="form-control" id="notes" name="notes" rows="3">{{ user.notes }}</textarea>
+                <label for="insurance_info" class="form-label"><i
+                        class="fas fa-shield-alt me-1"></i>Insurance
+                    Information</label>
+                <input type="text" class="form-control" id="insurance_info"
+                    name="insurance_info" value="{{ user.insurance_info }}"
+                    placeholder="Provider, Policy #, Group #">
             </div>
-            <button type="submit" class="btn btn-primary w-100" id="submitBtn"><i class="fas fa-save me-2"></i>Update and Generate New QR Code</button>
+
+            <!-- Vital Signs - optional but cool for health QR -->
+            <h5 class="section-banner">Vital Signs (if available)</h5>
+            <div class="mb-3">
+                <label for="blood_pressure" class="form-label"><i
+                        class="fas fa-heartbeat me-1"></i>Blood Pressure</label>
+                <input type="text" class="form-control" id="blood_pressure"
+                    name="blood_pressure" value="{{ user.blood_pressure }}"
+                    placeholder="e.g., 120/80 mmHg">
+            </div>
+            <div class="mb-3">
+                <label for="heart_rate" class="form-label"><i
+                        class="fas fa-heart me-1"></i>Heart Rate</label>
+                <input type="number" class="form-control" id="heart_rate"
+                    name="heart_rate" min="0" max="200"
+                    value="{{ user.heart_rate if user.heart_rate else '' }}"
+                    placeholder="beats/min">
+            </div>
+            <div class="mb-3">
+                <label for="oxygen_saturation" class="form-label"><i
+                        class="fas fa-lungs me-1"></i>Oxygen Saturation</label>
+                <input type="number" class="form-control" id="oxygen_saturation"
+                    name="oxygen_saturation" min="0" max="100"
+                    value="{{ user.oxygen_saturation if user.oxygen_saturation else '' }}"
+                    placeholder="SpO2 %">
+            </div>
+
+            <!-- Notes - catch-all for extra info -->
+            <h5 class="section-banner">Additional Notes</h5>
+            <div class="mb-3">
+                <label for="notes" class="form-label"><i
+                        class="fas fa-sticky-note me-1"></i>Notes</label>
+                <textarea class="form-control" id="notes" name="notes"
+                    rows="3">{{ user.notes }}</textarea>
+            </div>
+
+            <!-- Submit button - full width for emphasis -->
+            <button type="submit" class="btn btn-primary w-100"
+                id="submitBtn"><i class="fas fa-save me-2"></i>Update and
+                Generate New QR Code</button>
+            <!-- Spinner - added for feedback, hides until submit -->
             <div id="loadingSpinner" class="text-center mt-3 d-none">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
@@ -99,31 +354,34 @@
     </div>
 </div>
 {% endblock %}
+
 {% block scripts %}
 <script>
-    // Add more emergency contacts
+    // Dynamic emergency contacts - took forever to get this working smoothly
     document.getElementById('addEmergencyContact').addEventListener('click', function() {
         const div = document.createElement('div');
         div.className = 'emergency-contact mb-2';
         div.innerHTML = `
-            <input type="tel" class="form-control mb-1" name="emergency_contact_number[]" placeholder="Phone Number (10 digits)" pattern="[0-9]{10}">
+            <input type="tel" class="form-control mb-1" name="emergency_contact_number[]" placeholder="Phone Number (10 digits)" pattern="[0-9]{10}" required>
             <input type="text" class="form-control" name="emergency_contact_relation[]" placeholder="Relation (e.g., Parent, Spouse)">
+            <input type="text" class="form-control" name="emergency_contact_name[]" placeholder="Name (e.g., John Doe)">
             <button type="button" class="btn btn-danger btn-sm mt-2 remove-contact"><i class="fas fa-trash-alt"></i> Remove</button>
         `;
         document.getElementById('emergencyContacts').appendChild(div);
-        div.querySelector('.remove-contact').addEventListener('click', function() {
-            div.remove();
-        });
+        bindRemoveEvent(div.querySelector('.remove-contact'));
     });
 
-    // Remove emergency contacts
-    document.querySelectorAll('.remove-contact').forEach(button => {
+    // Remove button binding - had to make this reusable
+    function bindRemoveEvent(button) {
         button.addEventListener('click', function() {
-            this.parentElement.remove();
+            this.closest('.emergency-contact').remove();
         });
-    });
+    }
 
-    // Show loading spinner on form submission
+    // Bind existing contacts - forgot this at first, oops
+    document.querySelectorAll('.remove-contact').forEach(bindRemoveEvent);
+
+    // Spinner on submit - gives user feedback, love this touch
     document.getElementById('healthForm').addEventListener('submit', function() {
         const submitBtn = document.getElementById('submitBtn');
         const loadingSpinner = document.getElementById('loadingSpinner');
@@ -132,7 +390,7 @@
         loadingSpinner.classList.remove('d-none');
     });
 
-    // Bootstrap form validation
+    // Bootstrap validation - straight from docs, works great
     (function () {
         'use strict';
         const form = document.getElementById('healthForm');

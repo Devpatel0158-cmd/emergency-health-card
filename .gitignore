@@ -4,3 +4,4 @@ static/uploads/
 static/qr_codes/
 __pycache__/
 *.pyc
+.vercel

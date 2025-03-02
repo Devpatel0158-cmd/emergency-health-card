@@ -1,22 +1,80 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
+<!-- Simple title, might spice it up later -->
+
 {% block content %}
-<div class="text-center">
+<div class="text-center"> <!-- Centering everything for a clean look -->
+    <!-- Dashboard header - added an icon for visual flair -->
     <h1 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h1>
-    <p class="lead">Welcome, {{ current_user.id }}! Manage your emergency health cards.</p>
-    <a href="{{ url_for('create_health_card') }}" class="btn btn-primary mb-4"><i class="fas fa-plus me-2"></i>Create New Health Card</a>
+    <!-- Personalized welcome - took a sec to get the username from Flask-Login -->
+    <p class="lead">Welcome, {{ user_username }}! Manage your emergency health
+        cards.</p>
+
+    <!-- Health Tips Carousel - thought this would be a cool feature -->
+    <!-- Used Bootstrap carousel, had to tweak the data attributes to work -->
+    <div id="healthTipsCarousel" class="carousel slide mb-4"
+        data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for tip in health_tips %}
+            <!-- Loop through tips - first one is active, took me a bit to figure out loop.first -->
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                <div class="card text-bg-dark"> <!-- Dark card for contrast -->
+                    <div class="card-body">
+                        <p class="card-text">{{ tip }}</p>
+                        <!-- Simple tip display -->
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Carousel controls - copy-pasted from Bootstrap docs, works like a charm -->
+        <button class="carousel-control-prev" type="button"
+            data-bs-target="#healthTipsCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button"
+            data-bs-target="#healthTipsCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!-- Create button - primary color to draw attention -->
+    <a href="{{ url_for('create_health_card') }}"
+        class="btn btn-primary mb-4"><i class="fas fa-plus me-2"></i>Create New
+        Health Card</a>
+
+    <!-- Health cards section - simple heading for now -->
     <h5>Your Health Cards</h5>
+
     {% if health_cards %}
+    <!-- Grid layout - went with 2 columns for medium screens -->
     <div class="row">
         {% for card in health_cards %}
         <div class="col-md-6 mb-4">
+            <!-- Half-width cards, full-width on mobile -->
             <div class="card">
                 <div class="card-body">
+                    <!-- Basic info - kept it minimal for the dashboard -->
                     <p><strong>Name:</strong> {{ card.name }}</p>
                     <p><strong>Blood Type:</strong> {{ card.blood_type }}</p>
+                    <!-- Action buttons - flexbox for spacing, took some tweaking -->
                     <div class="d-flex gap-2">
-                        <a href="{{ url_for('get_user_data', user_id=card.id) }}" class="btn btn-outline-primary btn-sm">View Details</a>
-                        <a href="{{ url_for('edit_health_card', user_id=card.id) }}" class="btn btn-outline-warning btn-sm"><i class="fas fa-edit me-1"></i>Edit</a>
+                        <!-- View details - outline to keep it subtle -->
+                        <a
+                            href="{{ url_for('get_user_data', user_id=card.id) }}"
+                            class="btn btn-outline-primary btn-sm">View
+                            Details</a>
+                        <!-- Edit button - warning color for caution vibe -->
+                        <a
+                            href="{{ url_for('edit_health_card', user_id=card.id) }}"
+                            class="btn btn-outline-warning btn-sm"><i
+                                class="fas fa-edit me-1"></i>Edit</a>
+                        <!-- QR button - success color to feel positive -->
+                        <a href="{{ url_for('show_qr', card_id=card.id) }}"
+                            class="btn btn-outline-success btn-sm"><i
+                                class="fas fa-qrcode me-1"></i>Show QR</a>
                     </div>
                 </div>
             </div>
@@ -24,6 +82,7 @@
         {% endfor %}
     </div>
     {% else %}
+    <!-- No cards message - muted text for a softer feel -->
     <p class="text-muted">You haven't created any health cards yet.</p>
     {% endif %}
 </div>

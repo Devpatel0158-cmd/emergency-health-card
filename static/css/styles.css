@@ -1,406 +1,455 @@
-/* Import Google Fonts for modern typography */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+/* Import Google Fonts for modern typography - went with Poppins for its clean, readable look */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
-/* Global styles */
+/* Global styles - setting the foundation for the app */
 body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); /* Gradient background */
-    color: #333;
-    min-height: 100vh;
-    margin: 0;
+  font-family: "Poppins", sans-serif; /* Love how this font feels professional yet approachable */
+  background: linear-gradient(
+    135deg,
+    #e3f2fd 0%,
+    #bbdefb 100%
+  ); /* Light blue gradient - feels health-related and calming */
+  color: #333; /* Dark enough for readability */
+  min-height: 100vh; /* Ensures footer stays at bottom if content is short */
+  margin: 0; /* Resetting default margin */
+  transition: background 0.3s, color 0.3s; /* Smooth transition for dark mode toggle */
 }
 
-/* Dark mode background */
+/* Dark mode background - took a while to find a gradient that wasn’t too harsh */
 .dark-mode {
-    background: linear-gradient(135deg, #2e4b34 0%, #4a6b51 100%); /* Darker green gradient for dark mode */
-    color: #e0e0e0;
+  background: linear-gradient(
+    135deg,
+    #1a2632 0%,
+    #2e3b46 100%
+  ); /* Slightly lighter dark blue-gray for depth */
+  color: #e0e0e0; /* Light text for contrast */
 }
 
-/* Enhance dark mode styles */
+/* Enhance dark mode styles - tweaking everything to look cohesive */
 .dark-mode .navbar {
-    background: #0d3b66; /* Darker blue for navbar */
+  background: #0d1b2a; /* Darker navy blue - matches the health theme in dark mode */
 }
 
 .dark-mode .card {
-    background-color: #3e4e50;
-    color: #e0e0e0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  background-color: #2d3a47; /* Slightly lighter than navbar for hierarchy */
+  color: #e0e0e0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Stronger shadow to pop in dark mode */
 }
 
 .dark-mode .form-control {
-    background-color: #5c6b73;
-    color: #e0e0e0;
-    border-color: #90caf9;
+  background-color: #3a4d61; /* Subtle contrast against the card */
+  color: #e0e0e0;
+  border-color: #4fc3f7; /* Lighter blue - had to adjust from default for visibility */
 }
 
 .dark-mode .form-control:focus {
-    border-color: #42a5f5;
-    box-shadow: 0 0 8px rgba(66, 165, 245, 0.3);
+  border-color: #29b6f6;
+  box-shadow: 0 0 8px rgba(41, 182, 246, 0.3); /* Glow effect for focus - looks cool! */
 }
 
 .dark-mode .form-label,
 .dark-mode .card-body p,
 .dark-mode .lead,
 .dark-mode .text-muted {
-    color: #b0bec5;
+  color: #b0bec5; /* Softer gray for secondary text */
 }
 
 .dark-mode .card-body strong,
 .dark-mode h1,
 .dark-mode h5 {
-    color: #90caf9;
+  color: #4fc3f7; /* Lighter blue - stands out without being too bright */
 }
 
 .dark-mode footer {
-    background: #0d3b66;
+  background: #0d1b2a; /* Consistent with navbar */
 }
 
 .dark-mode .btn-primary {
-    background-color: #42a5f5;
-    border-color: #42a5f5;
+  background-color: #29b6f6;
+  border-color: #29b6f6;
+  color: #fff; /* Explicitly set to white - had contrast issues earlier */
 }
 
 .dark-mode .btn-primary:hover {
-    background-color: #1e88e5;
-    border-color: #1e88e5;
+  background-color: #0288d1;
+  border-color: #0288d1;
+  color: #fff; /* Keeping text white on hover */
 }
 
 .dark-mode .btn-outline-primary {
-    border-color: #42a5f5;
-    color: #42a5f5;
+  border-color: #29b6f6;
+  color: #29b6f6; /* Matches border for consistency */
 }
 
 .dark-mode .btn-outline-primary:hover {
-    background-color: #42a5f5;
-    color: #fff;
+  background-color: #29b6f6;
+  color: #fff; /* White text on hover for readability */
 }
 
 .dark-mode .btn-success {
-    background-color: #66bb6a;
-    border-color: #66bb6a;
+  background-color: #66bb6a;
+  border-color: #66bb6a;
+  color: #fff; /* Explicit white for contrast */
 }
 
 .dark-mode .btn-success:hover {
-    background-color: #4caf50;
-    border-color: #4caf50;
+  background-color: #4caf50;
+  border-color: #4caf50;
+  color: #fff;
 }
 
 .dark-mode .btn-outline-warning {
-    border-color: #ffca28;
-    color: #ffca28;
+  border-color: #ffca28;
+  color: #ffca28; /* Yellow text - pops nicely */
 }
 
 .dark-mode .btn-outline-warning:hover {
-    background-color: #ffca28;
-    color: #333;
+  background-color: #ffca28;
+  color: #333; /* Dark text on yellow for readability */
+}
+
+.dark-mode .btn-danger {
+  background-color: #ef5350;
+  border-color: #ef5350;
+  color: #fff;
+}
+
+.dark-mode .btn-danger:hover {
+  background-color: #d32f2f;
+  border-color: #d32f2f;
+  color: #fff;
 }
 
 .dark-mode .qr-code img {
-    border-color: #42a5f5;
-    background-color: #3e4e50;
+  border-color: #29b6f6; /* Matching primary color scheme */
+  background-color: #2d3a47; /* Consistent with cards */
 }
 
 .dark-mode a {
-    color: #42a5f5;
+  color: #4fc3f7; /* Brighter blue for links */
 }
 
 .dark-mode a:hover {
-    color: #90caf9;
+  color: #81d4fa; /* Lighter shade for hover effect */
 }
 
 .dark-mode .alert-success {
-    background-color: #2e4b34;
-    color: #a5d6a7;
+  background-color: #2e7d32;
+  color: #c8e6c9; /* Soft green combo - feels positive */
 }
 
 .dark-mode .alert-danger {
-    background-color: #5c2e2e;
-    color: #ef9a9a;
+  background-color: #d32f2f;
+  color: #ffcdd2;
 }
 
 .dark-mode .alert-info {
-    background-color: #2e4066;
-    color: #90caf9;
+  background-color: #0288d1;
+  color: #bbdefb;
 }
 
 .dark-mode .spinner-border {
-    color: #42a5f5;
+  color: #29b6f6; /* Matches primary buttons */
 }
 
 .dark-mode #loadingSpinner p {
-    color: #b0bec5;
+  color: #b0bec5; /* Consistent with secondary text */
 }
 
 .dark-mode .card-body img {
-    border-color: #42a5f5;
+  border-color: #29b6f6; /* Matches QR border */
 }
 
 .dark-mode .card-body .fa-user-circle {
-    color: #42a5f5;
+  color: #4fc3f7; /* Matches headings */
 }
 
-/* Button shifting effect */
+/* Button shifting effect - added this for some fun interactivity */
 .btn-container {
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  overflow: hidden; /* Keeps shifted buttons contained */
 }
 
 .btn-container .btn {
-    transition: transform 0.5s ease-in-out;
+  transition: transform 0.5s ease-in-out; /* Smooth transition - tweaked timing for feel */
 }
 
 .shift-left {
-    transform: translateX(-50px);
+  transform: translateX(
+    -50px
+  ); /* Experimented with px values - 50 felt right */
 }
 
 .shift-right {
-    transform: translateX(50px);
+  transform: translateX(50px);
 }
 
 .shift-top {
-    transform: translateY(-50px);
+  transform: translateY(-50px);
 }
 
 .shift-bottom {
-    transform: translateY(50px);
+  transform: translateY(50px);
 }
 
 .msg {
-    color: #43a047;
-    font-weight: 500;
-    font-size: 1rem;
-    transition: opacity 0.5s ease-in-out;
+  color: #43a047; /* Green for success messages */
+  font-weight: 500;
+  font-size: 1rem;
+  transition: opacity 0.5s ease-in-out; /* Fade effect for messages */
 }
 
 .dark-mode .msg {
-    color: #66bb6a;
+  color: #66bb6a; /* Lighter green for dark mode */
 }
 
-/* Navbar styling */
+/* Navbar styling - wanted it to feel health-themed and bold */
 .navbar {
-    background: #1e88e5; /* Health-themed blue */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: #1e88e5; /* Health-themed blue - took some trial to pick this */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .navbar-brand {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #fff !important;
-    transition: color 0.3s;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff !important; /* Override Bootstrap defaults */
+  transition: color 0.3s; /* Smooth hover effect */
 }
 
 .navbar-brand:hover {
-    color: #ffca28 !important; /* Yellow hover effect */
+  color: #ffca28 !important; /* Yellow hover - adds a nice pop */
 }
 
 .nav-link {
-    color: #fff !important;
-    font-weight: 500;
-    transition: color 0.3s;
+  color: #fff !important;
+  font-weight: 500;
+  transition: color 0.3s;
 }
 
 .nav-link:hover {
-    color: #ffca28 !important;
+  color: #ffca28 !important; /* Matching brand hover */
 }
 
-/* Container styling */
+/* Container styling - keeping it centered and manageable */
 .container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 30px 20px;
+  max-width: 600px; /* Narrower for focus - might adjust for larger screens later */
+  margin: 0 auto;
+  padding: 30px 20px; /* Generous padding for breathing room */
 }
 
-/* Headings */
+/* Headings - making them stand out */
 h1 {
-    font-size: 2.2rem;
-    font-weight: 600;
-    color: #1e88e5;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #1e88e5; /* Matches navbar */
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-transform: uppercase; /* Adds authority */
+  letter-spacing: 1px; /* Slight spacing for readability */
 }
 
-h5 {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #d32f2f; /* Red for emphasis */
-    margin-bottom: 1rem;
+/* Section Banner Styling - for separating sections visually */
+.section-banner {
+  background-color: #d32f2f; /* Red for urgency/health alert vibe */
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  text-align: left; /* Left-aligned for readability */
 }
 
-/* Form styling */
-.form-control {
-    border: 1px solid #90caf9;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 1rem;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    background-color: #fff;
+.dark-mode .section-banner {
+  background-color: #d32f2f; /* Kept same for consistency - might tweak later */
+  color: #fff;
 }
 
-.form-control:focus {
-    border-color: #1e88e5;
-    box-shadow: 0 0 8px rgba(30, 136, 229, 0.2);
-    outline: none;
-}
-
-.form-label {
-    font-weight: 500;
-    color: #555;
-}
-
-/* Buttons */
-.btn-primary {
-    background-color: #1e88e5;
-    border-color: #1e88e5;
-    font-weight: 500;
-    padding: 12px 20px;
-    border-radius: 8px;
-    transition: background-color 0.3s, transform 0.1s;
-}
-
-.btn-primary:hover {
-    background-color: #1565c0;
-    border-color: #1565c0;
-    transform: translateY(-2px);
-}
-
-.btn-outline-primary {
-    border-color: #1e88e5;
-    color: #1e88e5;
-    font-weight: 500;
-    padding: 10px 15px;
-    border-radius: 8px;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.btn-outline-primary:hover {
-    background-color: #1e88e5;
-    color: #fff;
-}
-
-.btn-success {
-    background-color: #43a047;
-    border-color: #43a047;
-    font-weight: 500;
-    padding: 12px 20px;
-    border-radius: 8px;
-    transition: background-color 0.3s, transform 0.1s;
-}
-
-.btn-success:hover {
-    background-color: #388e3c;
-    border-color: #388e3c;
-    transform: translateY(-2px);
-}
-
-.btn-danger {
-    background-color: #d32f2f;
-    border-color: #d32f2f;
-    font-weight: 500;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-}
-
-.btn-danger:hover {
-    background-color: #b71c1c;
-    border-color: #b71c1c;
-}
-
-/* Card styling (for user data display) */
 .card {
-    background-color: #fff;
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-    transition: transform 0.3s;
+  background-color: #fff;
+  border: none; /* Removed default border for cleaner look */
+  border-radius: 12px; /* Softer corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Lifted effect */
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.3s; /* Hover effect */
 }
 
 .card:hover {
-    transform: translateY(-5px);
+  transform: translateY(-5px); /* Subtle lift - feels interactive */
+}
+
+.card-body {
+  text-align: left; /* Left for natural reading */
 }
 
 .card-body p {
-    font-size: 1rem;
-    margin-bottom: 10px;
-    color: #444;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #444; /* Softer than black for less strain */
 }
 
 .card-body strong {
-    color: #1e88e5;
-    font-weight: 500;
+  color: #1e88e5; /* Matching theme */
+  font-weight: 500;
 }
 
-/* QR Code section */
 .qr-code img {
-    border: 5px solid #1e88e5;
-    border-radius: 10px;
-    padding: 10px;
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 5px solid #1e88e5; /* Thick border to frame it */
+  border-radius: 10px;
+  padding: 10px; /* Inner padding for a clean look */
+  background-color: #fff; /* White bg for contrast */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-/* Alerts */
+/* Alerts - making them pop but not overpower */
 .alert {
-    border-radius: 8px;
-    font-weight: 500;
-    margin-bottom: 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-bottom: 20px;
 }
 
 .alert-success {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+  background-color: #e8f5e9; /* Light green - soothing */
+  color: #2e7d32;
 }
 
 .alert-danger {
-    background-color: #ffebee;
-    color: #d32f2f;
+  background-color: #ffebee;
+  color: #d32f2f;
 }
 
 .alert-info {
-    background-color: #e3f2fd;
-    color: #1e88e5;
+  background-color: #e3f2fd;
+  color: #1e88e5; /* Matches theme */
 }
 
-/* Links */
+/* Links - consistent with theme */
 a {
-    color: #1e88e5;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
+  color: #1e88e5;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
 }
 
 a:hover {
-    color: #1565c0;
-    text-decoration: underline;
+  color: #1565c0; /* Darker blue for hover */
+  text-decoration: underline; /* Feedback for interaction */
 }
 
-/* Additional fields (for health data form) */
 .additional-field {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+  display: flex;
+  gap: 10px; /* Space between inputs */
+  margin-bottom: 15px;
 }
 
 .additional-field input {
-    flex: 1;
+  flex: 1; /* Evenly sized inputs */
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments - tested on my phone to get this right */
 @media (max-width: 576px) {
-    h1 {
-        font-size: 1.8rem;
-    }
+  h1 {
+    font-size: 1.8rem; /* Slightly smaller for small screens */
+  }
 
-    .container {
-        padding: 20px 15px;
-    }
+  .container {
+    padding: 20px 15px; /* Tighter padding */
+  }
 
-    .form-control,
-    .btn {
-        font-size: 0.9rem;
-        padding: 10px;
-    }
+  .form-control,
+  .btn {
+    font-size: 0.9rem; /* Readable but not cramped */
+    padding: 10px;
+  }
+
+  .section-banner {
+    font-size: 1rem;
+    padding: 8px 12px; /* Scaled down */
+  }
+}
+
+/* Profile image and icon styling - had to tweak floats for layout */
+.card-body img,
+.card-body .fa-user-circle {
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+.profile-image {
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  border: 3px solid #1e88e5; /* Matches theme */
+  max-width: 150px; /* Keeps it proportional */
+  height: auto;
+  object-fit: cover; /* No stretching */
+  border-radius: 5px;
+}
+
+.dark-mode .profile-image {
+  border-color: #29b6f6; /* Consistent with dark mode */
+}
+
+.card-body {
+  text-align: left;
+  overflow: auto; /* Handles float overflow */
+  clear: both; /* Clears floats */
+}
+
+/* QR code layout - wanted it side-by-side with actions */
+.qr-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px; /* Space between QR and buttons */
+  margin-bottom: 20px;
+}
+
+.qr-image {
+  flex: 1;
+  max-width: 300px; /* Limits QR size */
+}
+
+.qr-actions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between buttons */
+}
+
+.qr-actions .btn {
+  width: 100%; /* Full width for consistency */
+  text-align: center;
+}
+
+/* Repeated card-body - might consolidate later, keeping for clarity now */
+.card-body {
+  text-align: left;
+  overflow: auto;
+  clear: both;
+  padding: 20px; /* Consistent padding */
+}
+
+/* Repeated image/icon styling - might DRY this up later */
+.card-body img,
+.card-body .fa-user-circle {
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+.profile-image {
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  border: 3px solid #1e88e5;
+  max-width: 150px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.dark-mode .profile-image {
+  border-color: #29b6f6;
 }

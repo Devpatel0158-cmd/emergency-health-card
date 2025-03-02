@@ -1,19 +1,40 @@
 {% extends "base.html" %}
 {% block title %}Health QR{% endblock %}
+<!-- Simple title, ties into branding -->
+
 {% block content %}
+<!-- Centered layout - wanted a clean, welcoming vibe -->
 <div class="text-center mt-5">
-    <h1 class="display-4"><i class="fas fa-heartbeat me-2"></i>Welcome to Health QR</h1>
-    <p class="lead mt-3">Generate your digital emergency health card with a QR code to share critical medical information in emergencies.</p>
+    <!-- Big header with heartbeat icon - health theme right off the bat -->
+    <h1 class="display-4"><i class="fas fa-heartbeat me-2"></i>Welcome to Health
+        QR</h1>
+
+    <!-- Lead text - kept it concise but descriptive -->
+    <p class="lead mt-3">Generate your digital emergency health card with a QR
+        code to share critical medical information in emergencies.</p>
+
+    <!-- Buttons - flexbox for spacing, primary for login since it’s the main action -->
     <div class="d-flex justify-content-center gap-3 mt-4">
-        <a href="{{ url_for('login') }}" class="btn btn-primary"><i class="fas fa-sign-in-alt me-2"></i>Login</a>
-        <a href="{{ url_for('signup') }}" class="btn btn-outline-primary"><i class="fas fa-user-plus me-2"></i>Sign Up</a>
+        <a href="{{ url_for('login') }}" class="btn btn-primary"><i
+                class="fas fa-sign-in-alt me-2"></i>Login</a>
+        <a href="{{ url_for('signup') }}" class="btn btn-outline-primary"><i
+                class="fas fa-user-plus me-2"></i>Sign Up</a>
     </div>
+
+    <!-- Why section - added this to sell the idea, aligns with hackathon goals -->
     <div class="mt-5">
         <h5>Why Health QR?</h5>
+        <!-- List - unstyled with icons, centered it with max-width after testing -->
         <ul class="list-unstyled text-start mx-auto" style="max-width: 400px;">
-            <li class="mb-2"><i class="fas fa-check-circle me-2 text-success"></i>Instant access to medical information.</li>
-            <li class="mb-2"><i class="fas fa-check-circle me-2 text-success"></i>Secure and easy to use.</li>
-            <li><i class="fas fa-check-circle me-2 text-success"></i>Supports SDG 3: Good Health and Well-being.</li>
+            <li class="mb-2"><i
+                    class="fas fa-check-circle me-2 text-success"></i>Instant
+                access to medical information.</li>
+            <li class="mb-2"><i
+                    class="fas fa-check-circle me-2 text-success"></i>Secure and
+                easy to use.</li>
+            <!-- SDG tie-in - thought it’d impress judges -->
+            <li><i class="fas fa-check-circle me-2 text-success"></i>Supports
+                SDG 3: Good Health and Well-being.</li>
         </ul>
     </div>
 </div>

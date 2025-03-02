@@ -1,15 +1,25 @@
 {% extends "base.html" %}
 {% block title %}QR Code Generated{% endblock %}
 {% block content %}
-<div class="card mx-auto" style="max-width: 500px;" data-aos="fade-up">
-    <div class="card-body text-center">
-        <h1 class="mb-4"><i class="fas fa-qrcode me-2"></i>QR Code Generated</h1>
-        <p>Your health card has been created! Scan the QR code below to access your emergency health information.</p>
-        <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code" class="img-fluid mb-3" style="max-width: 300px;">
-        <p><strong>User ID:</strong> {{ user_id }}</p>
-        <div class="d-flex justify-content-center gap-3">
-            <button onclick="window.print()" class="btn btn-primary"><i class="fas fa-print me-2"></i>Print QR Code</button>
-            <a href="#" onclick="downloadQRCode('{{ qr_base64 }}', '{{ user_id }}')" class="btn btn-success"><i class="fas fa-download me-2"></i>Download QR Code</a>
+<div class="card mx-auto" style="max-width: 600px;" data-aos="fade-up">
+    <div class="card-body text-left">
+        <h1 class="mb-4"><i class="fas fa-qrcode me-2"></i>QR Code
+            Generated</h1>
+        <p>Your health card has been created! Scan the QR code below to access
+            your emergency health information.</p>
+        <div class="qr-container">
+            <div class="qr-image">
+                <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code"
+                    class="img-fluid" style="max-width: 300px;">
+            </div>
+            <div class="qr-actions">
+                <button onclick="window.print()" class="btn btn-primary mb-2"><i
+                        class="fas fa-print me-2"></i>Print QR Code</button>
+                <a href="#"
+                    onclick="downloadQRCode('{{ qr_base64 }}', '{{ user_id }}')"
+                    class="btn btn-success"><i
+                        class="fas fa-download me-2"></i>Download QR Code</a>
+            </div>
         </div>
     </div>
 </div>
